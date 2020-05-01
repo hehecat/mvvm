@@ -57,7 +57,7 @@ class Compile {
      */
     update(node, vm, exp, type) {
         const updateFn = this[type+'Update'];
-        updateFn && updateFn(node, vm.$data[exp]);
+        updateFn && updateFn(node, vm[exp]);
 
         // vue实例化 compile 时将更新函数放入回调，在修改model触发set时会被再次调用
         new Watcher(vm, exp, function(value) {

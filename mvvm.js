@@ -16,6 +16,7 @@ class Vue {
 class Observer {
     constructor(obj, vm) {
         this.$vm = vm;
+        this.$data = obj; 
         this.observer(obj);
     }
 
@@ -25,6 +26,7 @@ class Observer {
         }else {
             Object.keys(obj).forEach(key => {
                 this.defineReactive(obj, key, obj[key]);
+                this.proxyData(key);
             })
         }
     }
@@ -39,6 +41,7 @@ class Observer {
         const dep = new Dep();
         
         Object.defineProperty(obj, key, {
+            configurable:true,
             get() {
                 Dep.target && dep.addDep(Dep.target);
                 return val;
@@ -49,6 +52,18 @@ class Observer {
                     dep.notify();
                     console.log(`属性:${key} 更新为 ${newVal}`);
                 }
+            }
+        })
+    }
+
+    proxyData(key) {
+        Object.defineProperty(this.$vm, key, {
+            configurable:true,
+            get() {
+                return this.$data[key];
+            },
+            set(val) {
+                this.$data[key] = val;
             }
         })
     }
@@ -89,6 +104,6 @@ class Watcher {
     }
 
     update() {
-        this.cb.call(this.vm, this.vm.$data[this.exp]);
+        this.cb.call(this.vm, this.vm[this.exp]);
     }
 }
