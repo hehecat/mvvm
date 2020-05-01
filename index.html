@@ -28,13 +28,11 @@
             }
         },
     })
-    console.log(app.$data.name);
-    app.$data.name = 'didi';
-    app.$data.children.age = 22;
-    console.log(app.$data.name);
 
-    // 目前修改 model 不会改变视图，因为还未进行依赖收集，视图修改仅在vue实例化compile时进行一次
+    // 实现依赖收集，在对 model修改时触发set, 对dep收集的依赖通知更新， View 会跟着变更
+   setInterval(()=>{
     app.$data.name = 'didi';
+   },1000)
 
 </script>
 

@@ -35,13 +35,18 @@ class Observer {
         if(Object.prototype.toString.call(obj[key]) == '[object Object]') {
             this.observer(obj[key]);
         }
+        
+        const dep = new Dep();
+        
         Object.defineProperty(obj, key, {
             get() {
+                Dep.target && dep.addDep(Dep.target);
                 return val;
             },
             set(newVal) {
                 if(val !== newVal) {
                     val = newVal;
+                    dep.notify();
                     console.log(`属性:${key} 更新为 ${newVal}`);
                 }
             }
@@ -69,11 +74,21 @@ class Dep {
 
 // 任何使用到 data 中对象的元素都是依赖， 每个依赖都对应一个Watcher。每实例化一个Watcher都会被添加至对应 obj 的Dep中
 class Watcher {
-    constructor() {
+    constructor(vm, exp, cb) {
+        this.vm = vm;
+        this.exp = exp;
+        this.cb = cb;
 
+        /*
+         每次实例化 Watcher 时都将当前实例指向 Dep 中的静态变量 target
+         然后访问一下被依赖的属性，触发 get触发器，将当前实例添加至 Dep 中   
+        */
+        Dep.target = this;
+        this.vm.$data[this.exp];
+        Dep.target = null;
     }
 
     update() {
-
+        this.cb.call(this.vm, this.vm.$data[this.exp]);
     }
 }
