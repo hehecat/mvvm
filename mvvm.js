@@ -12,7 +12,7 @@ class Vue {
     }
 }
 
-// 观察 Data 中的所有属性，并对被依赖的属性进行依赖收集
+// 递归监听 data 中的所有属性，并对被依赖的属性进行依赖收集
 class Observer {
     constructor(obj, vm) {
         this.$vm = vm;
@@ -20,7 +20,32 @@ class Observer {
     }
 
     observer(obj) {
+        if(!obj || typeof obj != 'object') {
+            return;
+        }else {
+            Object.keys(obj).forEach(key => {
+                this.defineReactive(obj, key, obj[key]);
+            })
+        }
+    }
 
+
+    defineReactive(obj, key, val) {
+        // 对象的属性仍是对象， 则递归调用 observer
+        if(Object.prototype.toString.call(obj[key]) == '[object Object]') {
+            this.observer(obj[key]);
+        }
+        Object.defineProperty(obj, key, {
+            get() {
+                return val;
+            },
+            set(newVal) {
+                if(val !== newVal) {
+                    val = newVal;
+                    console.log(`属性:${key} 更新为 ${newVal}`);
+                }
+            }
+        })
     }
 }
 

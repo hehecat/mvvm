@@ -12,8 +12,7 @@
 <body>
     <div id="app">
         <div>{{age}}</div>
-        <div>{{age}}</div>
-        <div>{{name}}</div>
+        <div v-text='name'></div>
     </div>
 </body>
 
@@ -29,6 +28,11 @@
             }
         },
     })
+    console.log(app.$data.name);
+    app.$data.name = 'didi';
+    app.$data.children.age = 22;
+    console.log(app.$data.name);
+    app.$data.name = 'hehe';
 </script>
 
 </html>
