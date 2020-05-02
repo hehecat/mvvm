@@ -35,8 +35,8 @@ class Compile {
                   const exp = attr.value;
 
                   if(this.isDirecitve(attrName)) {
-                      const dir = attrName.substring(2);
-                    this.update(node, this.$vm, exp, dir);
+                    const dir = attrName.substring(2);
+                    this[dir] &&  this[dir](node, this.$vm, exp);
 
                   }else if(this.isEvent(attrName)) {
                     const event = attrName.substring(1);
@@ -87,6 +87,23 @@ class Compile {
         node.textContent = val;
     }
 
+    modelUpdate(node, val) {
+        node.value = val;
+    }
+
+    text(node, vm ,exp) {
+        this.update(node, vm, exp, 'text');
+    }
+
+    model(node, vm, exp) {
+        // model => view
+        this.update(node, vm, exp, 'model');
+        // view => model 
+        node.addEventListener('input', (event) => {
+            vm[exp] = event.target.value;
+        })
+    }
+
     /**
      * 判断是否为标签元素 
      * @param {*} node 
@@ -109,5 +126,9 @@ class Compile {
 
     isEvent(attr) {
         return attr.indexOf('@') === 0;
+    }
+
+    isModel(attr) {
+        return attr.indexOf('v-model') === 0;
     }
 }
