@@ -30,11 +30,17 @@ class Compile {
             if(this.isElement(node)) {
               const attrs = node.attributes;
               Array.from(attrs).forEach(attr => {
+
                   const attrName = attr.name;
                   const exp = attr.value;
+
                   if(this.isDirecitve(attrName)) {
                       const dir = attrName.substring(2);
                     this.update(node, this.$vm, exp, dir);
+
+                  }else if(this.isEvent(attrName)) {
+                    const event = attrName.substring(1);
+                    this.eventHandle(node, this.$vm, exp, event);
                   }
               })
             }else if(this.isInterpolation(node)) {
@@ -65,6 +71,12 @@ class Compile {
         })
     }
 
+    eventHandle(node, vm, exp, event) {
+        const fn = vm.$options.methods && vm.$options.methods[exp];
+        if(fn && event){
+            node.addEventListener(event, fn.bind(vm));
+        }
+    }
 
     /**
      * 更新元素文本内容
@@ -93,5 +105,9 @@ class Compile {
 
     isDirecitve(attr) {
         return attr.indexOf('v-') === 0;
+    }
+
+    isEvent(attr) {
+        return attr.indexOf('@') === 0;
     }
 }

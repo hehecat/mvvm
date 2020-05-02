@@ -13,6 +13,7 @@
     <div id="app">
         <div>{{age}}</div>
         <div v-text='name'></div>
+        <button @click='changeName'>click</button>
     </div>
 </body>
 
@@ -27,12 +28,17 @@
                 age: 11
             }
         },
+        methods: {
+            changeName() {
+                this.name = 'didi';
+            }
+        }
     })
 
-    // 实现依赖收集，在对 model修改时触发set, 对dep收集的依赖通知更新， View 会跟着变更
-   setInterval(()=>{
-    app.$data.name = 'didi';
-   },1000)
+// 实现依赖收集，在对 model修改时触发set, 对dep收集的依赖通知更新， View 会跟着变更
+//    setInterval(()=>{
+//     app.$data.name = 'didi';
+//    },1000)
 
 </script>
 
